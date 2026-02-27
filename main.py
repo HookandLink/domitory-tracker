@@ -3,7 +3,10 @@ import sys
 import re
 import json
 import requests
+import urllib3
 from bs4 import BeautifulSoup
+
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 from dataclasses import dataclass
 from datetime import datetime
 
@@ -89,9 +92,13 @@ def make_session(site: DormSite) -> requests.Session:
     """
     사이트별 세션을 생성합니다.
     동소문처럼 jsessionid가 필요한 사이트는 메인 페이지 방문으로 쿠키를 선취득합니다.
+    홍제는 SSL 인증서 호스트명 불일치로 verify=False 적용합니다.
     """
     session = requests.Session()
     session.headers.update({**BASE_HEADERS, "Referer": site.base_url})
+
+    if site.site_key == "hongje":
+        session.verify = False
 
     # 세션 쿠키 획득을 위해 메인 페이지 선방문 (실패해도 계속 진행)
     try:
@@ -292,6 +299,18 @@ def monitor_site(site: DormSite, seen_for_site: set) -> tuple[set, list[dict]]:
 
 
 def main() -> None:
+    if "--test" in sys.argv:
+        print("[테스트] 텔레그램 테스트 알림 전송 중...")
+        site_list = "\n".join(f"  {s.emoji} {s.name}" for s in SITES)
+        send_telegram(
+            "🧪 <b>테스트 알림</b>\n\n"
+            "텔레그램 연동이 정상적으로 작동합니다.\n\n"
+            f"<b>모니터링 대상:</b>\n{site_list}\n\n"
+            f"<b>키워드:</b> {', '.join(KEYWORDS)}"
+        )
+        print("  완료. 텔레그램을 확인하세요.")
+        return
+
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     print(f"[{now}] 행복기숙사 공지사항 모니터링 시작")
     print(f"  모니터링 사이트: {', '.join(s.name for s in SITES)}")

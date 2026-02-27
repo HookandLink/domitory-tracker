@@ -7,6 +7,12 @@ on:
 
   # GitHub Actions 탭에서 수동으로 실행할 수 있도록 허용
   workflow_dispatch:
+    inputs:
+      test_mode:
+        description: "테스트 모드 (텔레그램 알림만 전송, 크롤링 생략)"
+        required: false
+        default: false
+        type: boolean
 
 jobs:
   monitor:
@@ -38,10 +44,16 @@ jobs:
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-        run: python main.py
+        run: |
+          if [ "${{ github.event.inputs.test_mode }}" = "true" ]; then
+            python main.py --test
+          else
+            python main.py
+          fi
 
-      # 5. seen_notices.json 변경 시 자동 커밋
+      # 5. seen_notices.json 변경 시 자동 커밋 (테스트 모드가 아닐 때만)
       - name: 공고 목록 업데이트 저장
+        if: github.event.inputs.test_mode != 'true'
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"

@@ -1,6 +1,6 @@
-# 홍제 행복기숙사 상시모집 모니터링 봇
+# 행복기숙사 상시모집 모니터링 봇 (홍제 + 동소문)
 
-홍제 행복기숙사 공지사항을 자동으로 감시하여 **상시모집** 관련 공고가 올라오면 **텔레그램**으로 즉시 알림을 보내는 자동화 시스템입니다.
+홍제·동소문 행복기숙사 공지사항을 자동으로 감시하여 **상시모집** 관련 공고가 올라오면 **텔레그램**으로 즉시 알림을 보내는 자동화 시스템입니다.
 
 ---
 
@@ -12,7 +12,7 @@ GitHub Actions (30분마다)
     ▼
 main.py 실행
     │
-    ├─ 홍제 행복기숙사 공지사항 페이지 크롤링
+    ├─ 홍제·동소문 행복기숙사 공지사항 페이지 크롤링
     │
     ├─ seen_notices.json 과 비교 → 새 공고 추출
     │
@@ -83,11 +83,11 @@ domitory-tracker/
 
 1. 저장소 → **Actions** 탭 클릭
 2. 워크플로우가 비활성화 상태라면 **"I understand my workflows, go ahead and enable them"** 버튼 클릭
-3. `홍제 행복기숙사 공지 모니터링` 워크플로우가 목록에 보이면 완료입니다.
+3. `행복기숙사 공지 모니터링 (홍제 + 동소문)` 워크플로우가 목록에 보이면 완료입니다.
 
 ### STEP 5 — 첫 실행 테스트
 
-1. **Actions** 탭 → `홍제 행복기숙사 공지 모니터링` 워크플로우 선택
+1. **Actions** 탭 → `행복기숙사 공지 모니터링 (홍제 + 동소문)` 워크플로우 선택
 2. **Run workflow** → **Run workflow** 클릭
 3. 실행 후 로그를 확인하고, 텔레그램으로 시작 알림이 오는지 확인합니다.
 
@@ -156,5 +156,6 @@ python main.py
 ## 참고 링크
 
 - [홍제 행복기숙사 공지사항](https://hongje.happydorm.or.kr/hongje/bbs/getBbsList.do?menu_id=010500)
+- [동소문 행복기숙사 공지사항](https://www.happydorm.or.kr/dongsomun/ko/0601/board/board/)
 - [Telegram BotFather](https://t.me/BotFather)
 - [GitHub Actions 공식 문서](https://docs.github.com/ko/actions)
