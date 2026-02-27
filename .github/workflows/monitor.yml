@@ -1,0 +1,51 @@
+name: 홍제 행복기숙사 공지 모니터링
+
+on:
+  # 30분마다 자동 실행 (원하면 */10으로 변경해 10분 주기로)
+  schedule:
+    - cron: "*/30 * * * *"
+
+  # GitHub Actions 탭에서 수동으로 실행할 수 있도록 허용
+  workflow_dispatch:
+
+jobs:
+  monitor:
+    name: 공지사항 체크 및 텔레그램 알림
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # seen_notices.json 커밋을 위해 필요
+
+    steps:
+      # 1. 저장소 체크아웃 (seen_notices.json 포함)
+      - name: 저장소 체크아웃
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      # 2. Python 환경 설정
+      - name: Python 3.12 설정
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      # 3. 의존성 설치
+      - name: 라이브러리 설치
+        run: pip install -r requirements.txt
+
+      # 4. 모니터링 스크립트 실행
+      - name: 공지사항 모니터링 실행
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python main.py
+
+      # 5. seen_notices.json 변경 시 자동 커밋
+      - name: 공고 목록 업데이트 저장
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add seen_notices.json
+          # 변경사항이 있을 때만 커밋
+          git diff --cached --quiet || git commit -m "chore: 공지 목록 업데이트 $(date +'%Y-%m-%d %H:%M')"
+          git push
