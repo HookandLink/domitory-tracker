@@ -1,4 +1,4 @@
-name: 홍제 행복기숙사 공지 모니터링
+name: 행복기숙사 공지 모니터링 (홍제 + 동소문)
 
 on:
   # 30분마다 자동 실행 (원하면 */10으로 변경해 10분 주기로)
@@ -10,7 +10,7 @@ on:
 
 jobs:
   monitor:
-    name: 공지사항 체크 및 텔레그램 알림
+    name: 홍제 + 동소문 공지사항 체크 및 텔레그램 알림
     runs-on: ubuntu-latest
     permissions:
       contents: write  # seen_notices.json 커밋을 위해 필요
